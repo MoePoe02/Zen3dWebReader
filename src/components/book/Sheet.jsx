@@ -158,19 +158,21 @@ export default function Sheet({
     const load = async () => {
       if (needsFront) {
         // Skip if already loaded at the same or better quality.
-        if (loadedFrontQualityRef.current !== null && loadedFrontQualityRef.current >= targetQuality) return;
-        const tex = await renderPageToTexture(pdfDocument, pdfFrontPageNum, frontPageHighlights, frontPageDraws, targetQuality);
-        if (!cancelled && tex) {
-          setFrontTex(tex);
-          loadedFrontQualityRef.current = targetQuality;
+        if (loadedFrontQualityRef.current === null || loadedFrontQualityRef.current < targetQuality) {
+          const tex = await renderPageToTexture(pdfDocument, pdfFrontPageNum, frontPageHighlights, frontPageDraws, targetQuality);
+          if (!cancelled && tex) {
+            setFrontTex(tex);
+            loadedFrontQualityRef.current = targetQuality;
+          }
         }
       }
       if (needsBack) {
-        if (loadedBackQualityRef.current !== null && loadedBackQualityRef.current >= targetQuality) return;
-        const tex = await renderPageToTexture(pdfDocument, pdfBackPageNum, backPageHighlights, backPageDraws, targetQuality);
-        if (!cancelled && tex) {
-          setBackTex(tex);
-          loadedBackQualityRef.current = targetQuality;
+        if (loadedBackQualityRef.current === null || loadedBackQualityRef.current < targetQuality) {
+          const tex = await renderPageToTexture(pdfDocument, pdfBackPageNum, backPageHighlights, backPageDraws, targetQuality);
+          if (!cancelled && tex) {
+            setBackTex(tex);
+            loadedBackQualityRef.current = targetQuality;
+          }
         }
       }
     };
