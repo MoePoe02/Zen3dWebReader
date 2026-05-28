@@ -8,6 +8,15 @@ import Bookmark from './Bookmark';
 import Postit3D from './Postit3D';
 import ImageTag3D from './ImageTag3D';
 
+const areHighlightsOrDrawsEqual = (a, b) => {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].id !== b[i].id) return false;
+    if (a[i].points && b[i].points && a[i].points.length !== b[i].points.length) return false;
+  }
+  return true;
+};
+
 export default function Sheet({
   index,
   pdfFrontPageNum,
@@ -19,6 +28,11 @@ export default function Sheet({
   const meshRef = useRef();
   const groupRef = useRef();
   const [isActive, setIsActive] = useState(false);
+
+  const prevFrontHighlightsRef = useRef([]);
+  const prevFrontDrawsRef = useRef([]);
+  const prevBackHighlightsRef = useRef([]);
+  const prevBackDrawsRef = useRef([]);
 
   const currentSpreadIndex = useBookStore(state => state.currentSpreadIndex);
   const pdfDocument = useBookStore(state => state.pdfDocument);
@@ -93,12 +107,16 @@ export default function Sheet({
   const loadedFrontQualityRef = useRef(null);
   const loadedBackQualityRef  = useRef(null);
 
-  // Reset quality refs when the actual page numbers change (e.g. after a large jump).
+  // Reset quality and change refs when the actual page numbers change (e.g. after a large jump).
   useEffect(() => {
     loadedFrontQualityRef.current = null;
+    prevFrontHighlightsRef.current = [];
+    prevFrontDrawsRef.current = [];
   }, [pdfFrontPageNum]);
   useEffect(() => {
     loadedBackQualityRef.current = null;
+    prevBackHighlightsRef.current = [];
+    prevBackDrawsRef.current = [];
   }, [pdfBackPageNum]);
 
   // When the user explicitly changes quality in the HUD, reset both refs so the
@@ -113,6 +131,23 @@ export default function Sheet({
     const needsBack = pdfBackPageNum && ((!isCover && !isBackCover) || useNativeCover);
     if (!pdfDocument || !isNear || (!needsFront && !needsBack)) return;
     let cancelled = false;
+
+    // Detect if highlights or draws actually changed
+    const frontChanged = !areHighlightsOrDrawsEqual(prevFrontHighlightsRef.current, frontPageHighlights) ||
+                         !areHighlightsOrDrawsEqual(prevFrontDrawsRef.current, frontPageDraws);
+    const backChanged = !areHighlightsOrDrawsEqual(prevBackHighlightsRef.current, backPageHighlights) ||
+                        !areHighlightsOrDrawsEqual(prevBackDrawsRef.current, backPageDraws);
+
+    if (frontChanged) {
+      loadedFrontQualityRef.current = null;
+      prevFrontHighlightsRef.current = frontPageHighlights;
+      prevFrontDrawsRef.current = frontPageDraws;
+    }
+    if (backChanged) {
+      loadedBackQualityRef.current = null;
+      prevBackHighlightsRef.current = backPageHighlights;
+      prevBackDrawsRef.current = backPageDraws;
+    }
 
     // ── Strategy A: Dynamic Quality ───────────────────────────────────────────
     // Active spread → render at the user's chosen quality (high-res, sharp close-up).

@@ -449,7 +449,7 @@ export default function TextSelectionOverlay() {
         style={{ 
           position: 'absolute', inset: 0, zIndex: 150, 
           pointerEvents: (isHighlightMode || isEraserMode || isDrawMode || isSquareMode || isCompassMode) ? 'auto' : 'none',
-          cursor: isEraserMode ? `url(/ERASER.svg) 9 28, auto` : (isDrawMode || isSquareMode || isCompassMode) ? 'crosshair' : (isHighlightMode) ? 'text' : 'auto'
+          cursor: isEraserMode ? `url(${import.meta.env.BASE_URL}ERASER.svg) 9 28, auto` : (isDrawMode || isSquareMode || isCompassMode) ? 'crosshair' : (isHighlightMode) ? 'text' : 'auto'
         }}
       >
         <PageLayer 
