@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  background-color: #FFFFFF;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom Text Selection for Zen Reader */
+.select-text::selection {
+  background: rgba(144, 110, 80, 0.4); /* #906E50 with alpha */
+  color: inherit;
+}
+
+.select-text::-moz-selection {
+  background: rgba(144, 110, 80, 0.4);
+  color: inherit;
+}
+
+@keyframes postit-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(144, 110, 80, 0.5); }
+  70% { box-shadow: 0 0 0 20px rgba(144, 110, 80, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(144, 110, 80, 0); }
+}
+
+.postit-editing-overlay {
+  animation: postit-pulse 1.5s infinite;
+  border: 6px dashed rgba(144, 110, 80, 0.8);
+  border-radius: 4px;
+}
