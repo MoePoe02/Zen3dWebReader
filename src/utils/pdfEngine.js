@@ -12,7 +12,7 @@ export const loadPdfDocument = async (file) => {
     data: arrayBuffer,
     // THE FIX: Point to WASM decoders copied to public/pdfjs-wasm/
     // These are the openjpeg, jbig2 and qcms files needed for scanned books (JPEG2000/JPX).
-    wasmUrl: '/pdfjs-wasm/',
+    wasmUrl: `${import.meta.env.BASE_URL}pdfjs-wasm/`,
     cMapUrl: 'https://unpkg.com/pdfjs-dist@5.6.205/cmaps/',
     cMapPacked: true,
     useSystemFonts: true,
